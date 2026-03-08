@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOC Log Analyzer - Threat Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Tailwind Config for Dark Theme -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        soc: {
+                            bg: '#0B0F19',
+                            surface: '#1E293B',
+                            border: '#334155',
+                            neon: '#0ea5e9', // cyan
+                            critical: '#ef4444', // red
+                            high: '#f97316', // orange
+                            medium: '#eab308' // yellow
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-300 font-sans min-h-screen flex antialiased relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
+    <!-- Abstract background styling -->
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/20 rounded-full mix-blend-screen filter blur-[100px] opacity-50 animate-pulse"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full mix-blend-screen filter blur-[100px] opacity-30"></div>
+
+    <!-- Sidebar -->
+    <aside class="w-64 glass-panel z-10 hidden md:flex flex-col border-r border-white/5 shadow-2xl">
+        <div class="h-16 flex items-center px-6 border-b border-white/5 bg-black/20">
+            <svg class="w-8 h-8 text-soc-neon mr-3 shadow-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+            <span class="text-xl font-bold tracking-wider text-white">SOC<span class="text-soc-neon">SIEM</span></span>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2" id="sidebarNav">
+            <a href="#" id="nav-dashboard" class="nav-link active flex items-center space-x-3 px-4 py-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                <span class="font-medium whitespace-nowrap">Dashboard</span>
+            </a>
+            <a href="#" id="nav-reports" class="nav-link flex items-center space-x-3 px-4 py-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <span class="font-medium whitespace-nowrap">Reports</span>
+            </a>
+            <a href="#" id="nav-settings" class="nav-link flex items-center space-x-3 px-4 py-3">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <span class="font-medium whitespace-nowrap">Settings</span>
+            </a>
+        </nav>
+        <div class="px-6 py-4 border-t border-white/5 bg-black/20 text-sm text-slate-500 flex justify-between items-center">
+            <span>A2A System Offline</span>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col h-screen overflow-hidden z-10">
+        <!-- Top Header -->
+        <header class="h-16 flex items-center justify-between px-8 bg-slate-900/40 backdrop-blur-xl border-b border-white/5 z-20 shrink-0">
+            <h1 id="pageTitle" class="text-xl font-semibold text-white tracking-wide truncate mr-4">Dashboard Overview</h1>
+            <div class="flex items-center space-x-4 flex-shrink-0">
+                <div class="flex items-center space-x-2 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700/50">
+                    <span class="relative flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-sm font-medium text-emerald-400 whitespace-nowrap">Agents Online</span>
+                </div>
+                <button id="downloadReportBtn" class="flex items-center px-4 py-2 bg-soc-neon/10 hover:bg-soc-neon/20 text-soc-neon text-sm font-medium rounded-lg border border-soc-neon/30 transition shadow-sm backdrop-blur-sm whitespace-nowrap">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Download AI Report
+                </button>
+            </div>
+        </header>
+
+        <!-- Scrollable content -->
+        <main class="flex-1 overflow-y-auto p-8 custom-scrollbar relative z-10">
+            
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="content-view block">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
+                    <!-- Left Column: Upload & Live Feed (1/4 width) -->
+                    <div class="lg:col-span-1 flex flex-col gap-6">
+                        <!-- Upload Section -->
+                        <div class="glass-panel rounded-xl p-6 relative overflow-hidden group border-t border-t-white/10">
+                            <h2 class="text-lg font-semibold text-gradient mb-4">A2A Analysis Engine</h2>
+                            <div class="w-full">
+                                <div class="relative border-2 border-dashed border-slate-600 hover:border-soc-neon rounded-lg p-6 text-center transition cursor-pointer bg-black/20" id="dropzone">
+                                    <input type="file" id="logFile" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".log,.txt">
+                                    <svg class="w-8 h-8 text-soc-neon mx-auto mb-2 shadow-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                    <span class="text-slate-300 font-medium text-sm" id="fileNameDisplay">Upload raw logs to wake agents</span>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <button id="generateLogsBtn" class="text-xs text-soc-neon hover:text-emerald-400 font-medium transition flex items-center justify-center mx-auto bg-white/5 px-3 py-1.5 rounded-md border border-white/10 hover:bg-white/10">
+                                        <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                                        Auto-Generate Sample Logs
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="uploadStatus" class="hidden mt-4 p-3 rounded bg-black/30 border-l-2 border-soc-neon text-xs">
+                                Processing...
+                            </div>
+                        </div>
+
+                        <!-- Live Agent Activity Feed -->
+                        <div class="glass-panel rounded-xl p-6 flex-1 flex flex-col min-h-[300px] max-h-[350px]">
+                            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center flex-shrink-0">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                Live Agent Activity
+                            </h3>
+                            <div id="agentFeed" class="flex-1 min-h-0 overflow-y-auto custom-scrollbar space-y-3 pr-2 font-mono text-xs">
+                                <div class="text-slate-500 italic">Waiting for log ingestion...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Stats & Charts (3/4 width) -->
+                    <div class="lg:col-span-3 flex flex-col gap-8">
+                        <!-- Stats Overview -->
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                            <!-- Total Alerts -->
+                            <div class="glass-panel rounded-xl p-5 relative overflow-hidden">
+                                <div class="text-slate-400 text-sm font-medium">Total AI Alerts</div>
+                                <div class="mt-2 flex items-baseline gap-2">
+                                    <span class="text-4xl font-bold text-white" id="stat-total">0</span>
+                                </div>
+                            </div>
+                            <!-- Critical -->
+                            <div class="glass-panel rounded-xl p-5 relative overflow-hidden">
+                                <div class="text-slate-400 text-sm font-medium flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-soc-critical blink"></span> Critical Threats
+                                </div>
+                                <div class="mt-2 flex items-baseline gap-2">
+                                    <span class="text-4xl font-bold text-soc-critical drop-shadow-md" id="stat-critical">0</span>
+                                </div>
+                            </div>
+                            <!-- High -->
+                            <div class="glass-panel rounded-xl p-5 relative overflow-hidden">
+                                <div class="text-slate-400 text-sm font-medium flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-soc-high"></span> High Risk
+                                </div>
+                                <div class="mt-2 flex items-baseline gap-2">
+                                    <span class="text-4xl font-bold text-soc-high" id="stat-high">0</span>
+                                </div>
+                            </div>
+                            <!-- Medium -->
+                            <div class="glass-panel rounded-xl p-5 relative overflow-hidden">
+                                <div class="text-slate-400 text-sm font-medium flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-soc-medium"></span> Medium Potential
+                                </div>
+                                <div class="mt-2 flex items-baseline gap-2">
+                                    <span class="text-4xl font-bold text-soc-medium" id="stat-medium">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Row -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                            <!-- Chart: Alerts Over Time -->
+                            <div class="xl:col-span-1 glass-panel rounded-xl p-6 flex flex-col">
+                                <h3 class="text-md font-medium text-white mb-4">Alerts Over Time</h3>
+                                <div class="flex-1 min-h-[220px] relative w-full flex items-center justify-center">
+                                    <canvas id="timelineChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Chart: Threat Distribution -->
+                            <div class="xl:col-span-1 glass-panel rounded-xl p-6 flex flex-col">
+                                <h3 class="text-md font-medium text-white mb-4">Threat Distribution</h3>
+                                <div class="flex-1 min-h-[220px] relative w-full flex items-center justify-center">
+                                    <canvas id="severityChart"></canvas>
+                                </div>
+                            </div>
+                            
+                            <!-- Chart: Top Attacking IPs (Bar Chart) -->
+                            <div class="xl:col-span-1 glass-panel rounded-xl p-6 flex flex-col">
+                                <h3 class="text-md font-medium text-white mb-4">Top Attacker IPs</h3>
+                                <div class="flex-1 min-h-[220px] relative w-full">
+                                    <canvas id="topIpChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Alerts Table -->
+                        <div class="glass-panel rounded-xl overflow-hidden shadow-2xl">
+                            <div class="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-black/20">
+                                <h3 class="text-md font-medium text-white flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-soc-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Recent Threat Alerts
+                                </h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-black/60 text-slate-400 text-xs uppercase tracking-wider border-b border-white/10">
+                                            <th class="py-3 px-6 font-medium cursor-pointer hover:text-white transition group" onclick="handleSort('time')">
+                                                <div class="flex items-center gap-1">Time (UTC) <button><svg id="sort-time" class="w-3 h-3 transition transform text-soc-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg></button></div>
+                                            </th>
+                                            <th class="py-3 px-6 font-medium cursor-pointer hover:text-white transition group" onclick="handleSort('ip')">
+                                                <div class="flex items-center gap-1">Source / IP <button><svg id="sort-ip" class="w-3 h-3 opacity-30 transition transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg></button></div>
+                                            </th>
+                                            <th class="py-3 px-6 font-medium cursor-pointer hover:text-white transition group" onclick="handleSort('location')">
+                                                <div class="flex items-center gap-1">Location <button><svg id="sort-location" class="w-3 h-3 opacity-30 transition transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg></button></div>
+                                            </th>
+                                            <th class="py-3 px-6 font-medium cursor-pointer hover:text-white transition group" onclick="handleSort('type')">
+                                                <div class="flex items-center gap-1">Type <button><svg id="sort-type" class="w-3 h-3 opacity-30 transition transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg></button></div>
+                                            </th>
+                                            <th class="py-3 px-6 font-medium cursor-pointer hover:text-white transition group" onclick="handleSort('intel')">
+                                                <div class="flex items-center gap-1">Intel <button><svg id="sort-intel" class="w-3 h-3 opacity-30 transition transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg></button></div>
+                                            </th>
+                                            <th class="py-3 px-6 font-medium cursor-pointer hover:text-white transition group" onclick="handleSort('severity')">
+                                                <div class="flex items-center gap-1">Severity <button><svg id="sort-severity" class="w-3 h-3 opacity-30 transition transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg></button></div>
+                                            </th>
+                                            <th class="py-3 px-6 font-medium text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="alertsTableBody" class="text-sm divide-y divide-white/5">
+                                        <!-- Rows inserted by JS -->
+                                        <tr>
+                                            <td colspan="7" class="py-8 text-center text-slate-500">
+                                                <div class="flex justify-center items-center gap-2 animate-pulse w-full">
+                                                    <svg class="animate-spin h-5 w-5 text-soc-neon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                                    </svg>
+                                                    <span>Initializing Threat Monitor...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div> <!-- End Right Column -->
+                </div> <!-- End Main Grid -->
+            </div> <!-- End Dashboard View -->
+
+            <!-- VIEW: REPORTS -->
+            <div id="view-reports" class="content-view hidden w-full py-8 text-left">
+                <div class="max-w-6xl mx-auto space-y-6">
+                    <div class="mb-8 pl-2 border-l-4 border-soc-neon">
+                        <h2 class="text-2xl font-semibold text-white tracking-wide ml-3">Incident Export & Reporting</h2>
+                        <p class="text-sm text-slate-400 mt-1 ml-3">Generate automated intelligence summaries and compliance reports.</p>
+                    </div>
+
+                    <div class="bg-slate-900/60 backdrop-blur-xl rounded-2xl p-8 border border-slate-800 shadow-2xl overflow-hidden relative">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-soc-neon to-emerald-500"></div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
+                            <!-- JSON Report -->
+                            <div class="flex flex-col items-center justify-center py-8 px-4 rounded-xl bg-slate-950/50 border border-slate-800 hover:border-soc-neon/50 hover:bg-slate-900/80 transition-all shadow-inner group cursor-pointer" onclick="window.open(`${API_BASE_URL}/export/json`, '_blank')">
+                                <svg class="w-12 h-12 text-slate-500 group-hover:text-soc-neon mb-4 transition transform group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                                <h3 class="text-md font-medium text-slate-200 group-hover:text-white transition mb-2">Export JSON</h3>
+                                <p class="text-slate-500 group-hover:text-slate-400 transition text-xs text-center px-2">Raw machine-readable alerts data payload.</p>
+                            </div>
+
+                            <!-- CSV Report -->
+                            <div class="flex flex-col items-center justify-center py-8 px-4 rounded-xl bg-slate-950/50 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-900/80 transition-all shadow-inner group cursor-pointer" onclick="window.open(`${API_BASE_URL}/export/csv`, '_blank')">
+                                <svg class="w-12 h-12 text-slate-500 group-hover:text-emerald-500 mb-4 transition transform group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                <h3 class="text-md font-medium text-slate-200 group-hover:text-white transition mb-2">Export CSV</h3>
+                                <p class="text-slate-500 group-hover:text-slate-400 transition text-xs text-center px-2">Spreadsheet compatible incident tracking.</p>
+                            </div>
+                            
+                            <!-- TXT Report -->
+                            <div class="flex flex-col items-center justify-center py-8 px-4 rounded-xl bg-slate-950/50 border border-slate-800 hover:border-purple-500/50 hover:bg-slate-900/80 transition-all shadow-inner group cursor-pointer" onclick="window.open(`${API_BASE_URL}/export/txt`, '_blank')">
+                                <svg class="w-12 h-12 text-slate-500 group-hover:text-purple-500 mb-4 transition transform group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                <h3 class="text-md font-medium text-slate-200 group-hover:text-white transition mb-2">Detailed Report</h3>
+                                <p class="text-slate-500 group-hover:text-slate-400 transition text-xs text-center px-2">Formatted executive summary of threats.</p>
+                            </div>
+                            
+                            <!-- PDF Report -->
+                            <div class="flex flex-col items-center justify-center py-8 px-4 rounded-xl bg-slate-950/50 border border-slate-800 hover:border-red-500/50 hover:bg-slate-900/80 transition-all shadow-inner group cursor-pointer" onclick="window.open(`${API_BASE_URL}/export/pdf`, '_blank')">
+                                <svg class="w-12 h-12 text-slate-500 group-hover:text-red-500 mb-4 transition transform group-hover:-translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                <h3 class="text-md font-medium text-slate-200 group-hover:text-white transition mb-2">Export PDF</h3>
+                                <p class="text-slate-500 group-hover:text-slate-400 transition text-xs text-center px-2">Professional incidence response document.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End Reports View -->
+            </div> <!-- End Reports View -->
+
+            <!-- VIEW: SETTINGS -->
+            <div id="view-settings" class="content-view hidden w-full py-8 text-left">
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <!-- Heading -->
+                    <div class="mb-8 pl-2 border-l-4 border-soc-neon">
+                        <h2 class="text-2xl font-semibold text-white tracking-wide ml-3">System Configuration</h2>
+                        <p class="text-sm text-slate-400 mt-1 ml-3">Manage core thresholds and detection parameters for the A2A platform.</p>
+                    </div>
+                    
+                    <div class="bg-slate-900/60 backdrop-blur-xl rounded-2xl border border-slate-800 shadow-2xl overflow-hidden relative">
+                        <!-- Top Accent line -->
+                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-soc-neon to-purple-500"></div>
+
+                        <div class="p-6 md:p-8 space-y-8">
+                            <!-- Section 1 -->
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 mb-5 uppercase tracking-wider flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-soc-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    Threat Detection Thresholds
+                                </h4>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-xl bg-slate-950/50 border border-slate-800/80 hover:border-slate-700 transition shadow-inner gap-4 group">
+                                        <div>
+                                            <div class="text-slate-200 font-medium group-hover:text-white transition">Critical Severity Threshold</div>
+                                            <div class="text-sm text-slate-500 mt-1">Number of failed attempts before an alert is marked as critical.</div>
+                                        </div>
+                                        <input type="number" value="10" class="bg-slate-900 border border-slate-700/50 rounded-lg px-4 py-2 text-white w-24 text-center group-hover:border-soc-neon/50 focus:border-soc-neon focus:ring-1 focus:ring-soc-neon transition outline-none shadow-sm flex-shrink-0" disabled>
+                                    </div>
+
+                                    <div class="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-xl bg-slate-950/50 border border-slate-800/80 hover:border-slate-700 transition shadow-inner gap-4 group">
+                                        <div>
+                                            <div class="text-slate-200 font-medium group-hover:text-white transition">High Severity Threshold</div>
+                                            <div class="text-sm text-slate-500 mt-1">Number of failed attempts before an alert is marked as high.</div>
+                                        </div>
+                                        <input type="number" value="6" class="bg-slate-900 border border-slate-700/50 rounded-lg px-4 py-2 text-white w-24 text-center group-hover:border-soc-neon/50 focus:border-soc-neon focus:ring-1 focus:ring-soc-neon transition outline-none shadow-sm flex-shrink-0" disabled>
+                                    </div>
+
+                                    <div class="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-xl bg-slate-950/50 border border-slate-800/80 hover:border-slate-700 transition shadow-inner gap-4 group">
+                                        <div>
+                                            <div class="text-slate-200 font-medium group-hover:text-white transition">Medium Severity Threshold</div>
+                                            <div class="text-sm text-slate-500 mt-1">Minimum number of failed attempts to trigger an alert.</div>
+                                        </div>
+                                        <input type="number" value="3" class="bg-slate-900 border border-slate-700/50 rounded-lg px-4 py-2 text-white w-24 text-center group-hover:border-soc-neon/50 focus:border-soc-neon focus:ring-1 focus:ring-soc-neon transition outline-none shadow-sm flex-shrink-0" disabled>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="border-slate-800 text-transparent border-t-2">
+
+                            <!-- Section 2 -->
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 mb-5 uppercase tracking-wider flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-soc-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                                    API Configuration
+                                </h4>
+                                <div class="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-xl bg-slate-950/50 border border-slate-800/80 hover:border-slate-700 transition shadow-inner gap-4 group">
+                                    <div>
+                                        <div class="text-slate-200 font-medium group-hover:text-white transition">API Endpoint</div>
+                                        <div class="text-sm text-slate-500 mt-1">The backend URL the dashboard communicates with.</div>
+                                    </div>
+                                    <input type="text" value="http://localhost:8080/api" class="bg-slate-900 border border-slate-700/50 rounded-lg px-4 py-2 text-slate-400 w-full md:w-72 focus:outline-none pointer-events-none shadow-sm font-mono text-sm" disabled>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="pt-2 flex justify-end">
+                                <button class="px-6 py-2.5 bg-soc-neon hover:bg-emerald-500 text-slate-900 rounded-lg transition-all font-semibold shadow-[0_0_15px_rgba(14,165,233,0.3)] hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] transform hover:-translate-y-0.5 whitespace-nowrap" onclick="showToast('Settings saved successfully (Mock)', 'success')">
+                                    Save Configuration
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End Settings View -->
+
+        </main>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <!-- Timeline Investigation Modal -->
+    <div id="timelineModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 border-b border-white/10 bg-black/40 flex justify-between items-center">
+                <h3 class="text-lg font-medium text-white flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-soc-neon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Attack Timeline: <span id="timelineIpTarget" class="ml-2 font-mono text-emerald-400"></span>
+                </h3>
+                <button id="closeModalBtn" class="text-slate-400 hover:text-white transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 custom-scrollbar">
+                <div class="relative border-l-2 border-slate-700 ml-3 md:ml-6 space-y-6" id="timelineContainer">
+                    <!-- Timeline items injected here -->
+                    <div class="text-center py-4 text-slate-500 w-full animate-pulse">Loading forensics data...</div>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-black/40 border-t border-white/10 flex justify-end gap-3">
+                <button id="downloadSinglePdfBtn" class="px-4 py-2 bg-soc-neon/10 border border-soc-neon/50 text-soc-neon hover:bg-soc-neon/20 rounded transition flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Download PDF
+                </button>
+                <button id="closeModalFooterBtn" class="px-4 py-2 border border-slate-600 rounded text-slate-300 hover:bg-slate-800 transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+============================================================
+SOC INCIDENT REPORT - CONTINUOUS MONITORING PLATFORM
+Generated: 2026-03-08T21:35:25.003151
+============================================================
+
+EXECUTIVE SUMMARY
+------------------------------------------------------------
+Total Threats Monitored: 6
+Critical Severity Incidents: 1
+------------------------------------------------------------
+
+DETAILED ALERT LOG
+------------------------------------------------------------
+[2026-03-08T21:30:37.578496] MEDIUM ALERT
+  Source IP : 185.234.217.44 (None, None)
+  Intel     : None Reputation | None Abuse Reports
+  Vector    : Password Spraying against user 'None'
+  Attempts  : 5
+------------------------------------------------------------
+[2026-03-08T21:30:37.578496] HIGH ALERT
+  Source IP : 45.156.128.33 (None, None)
+  Intel     : None Reputation | None Abuse Reports
+  Vector    : Password Spraying against user 'None'
+  Attempts  : 8
+------------------------------------------------------------
+[2026-03-08T21:30:37.578496] HIGH ALERT
+  Source IP : 8.8.8.8 (None, None)
+  Intel     : None Reputation | None Abuse Reports
+  Vector    : Password Spraying against user 'None'
+  Attempts  : 7
+------------------------------------------------------------
+[2026-03-08T21:30:37.578496] HIGH ALERT
+  Source IP : 172.104.11.56 (None, None)
+  Intel     : None Reputation | None Abuse Reports
+  Vector    : Password Spraying against user 'None'
+  Attempts  : 7
+------------------------------------------------------------
+[2026-03-08T21:15:12.038713] HIGH ALERT
+  Source IP : 203.0.113.1 (country, city)
+  Intel     : Neutral Reputation | 0 Abuse Reports
+  Vector    : Brute-Force against user 'root'
+  Attempts  : 6
+------------------------------------------------------------
+[2026-03-08T21:14:54.510353] CRITICAL ALERT
+  Source IP : 45.156.128.33 (The Netherlands, Amsterdam)
+  Intel     : Suspicious Reputation | 4 Abuse Reports
+  Vector    : Brute-Force against user 'admin'
+  Attempts  : 10
+------------------------------------------------------------
+
+RECOMMENDED MITIGATIONS:
+1. Block identified Critical IPs at the network perimeter (firewall/WAF).
+2. Invalidate passwords for severely targeted accounts.
+3. Verify geolocation of source IPs against known employee geofences.
+
+============================================================

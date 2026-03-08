@@ -1,0 +1,22 @@
+==================================================
+SOC INCIDENT REPORT
+Generated: 2026-03-08T07:49:18.210586
+==================================================
+
+SUMMARY OF ATTACKS
+--------------------------------------------------
+IP: 8.8.8.8         | Attempts: 7    | Severity: Medium   | Time: 2026-03-08T07:47:30.015399
+IP: 185.234.217.44  | Attempts: 5    | Severity: Medium   | Time: 2026-03-08T07:47:30.015399
+IP: 10.0.0.101      | Attempts: 4    | Severity: Medium   | Time: 2026-03-08T07:00:23.895766
+IP: 45.156.128.33   | Attempts: 8    | Severity: High     | Time: 2026-03-08T07:47:30.015399
+IP: 198.51.100.2    | Attempts: 7    | Severity: High     | Time: 2026-03-08T07:00:23.895766
+IP: 172.104.11.56   | Attempts: 7    | Severity: High     | Time: 2026-03-08T07:47:30.015399
+IP: 203.0.113.45    | Attempts: 12   | Severity: Critical | Time: 2026-03-08T07:00:23.895766
+
+==================================================
+MITIGATION STEPS RECOMMENDED:
+1. Block critical/high severity IP addresses at the firewall.
+2. Investigate affected user accounts for potential compromise.
+3. Ensure fail2ban or similar IPS is actively running on exposed SSH ports.
+4. Consider implementing MFA for all remote access.
+==================================================

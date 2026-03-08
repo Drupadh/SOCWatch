@@ -1,0 +1,25 @@
+Mar  8 12:30:01 server sshd[1234]: Accepted publickey for root from 192.168.1.50 port 5566 ssh2
+Mar  8 12:31:10 server sshd[1250]: Failed password for invalid user admin from 10.0.0.101 port 4521 ssh2
+Mar  8 12:31:12 server sshd[1250]: Failed password for invalid user admin from 10.0.0.101 port 4521 ssh2
+Mar  8 12:31:14 server sshd[1250]: Failed password for invalid user admin from 10.0.0.101 port 4521 ssh2
+Mar  8 12:31:16 server sshd[1250]: Failed password for invalid user admin from 10.0.0.101 port 4521 ssh2
+Mar  8 12:35:00 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:35:05 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:35:10 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:35:15 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:35:20 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:35:25 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:35:30 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:35:35 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:35:40 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:35:45 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:35:50 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:35:55 server sshd[1301]: Failed password for user root from 203.0.113.45 port 2222 ssh2
+Mar  8 12:40:10 server sshd[1405]: Failed password for invalid user www-data from 198.51.100.2 port 3345 ssh2
+Mar  8 12:40:15 server sshd[1405]: Failed password for invalid user www-data from 198.51.100.2 port 3345 ssh2
+Mar  8 12:40:20 server sshd[1405]: Failed password for invalid user www-data from 198.51.100.2 port 3345 ssh2
+Mar  8 12:40:25 server sshd[1405]: Failed password for invalid user www-data from 198.51.100.2 port 3345 ssh2
+Mar  8 12:40:30 server sshd[1405]: Failed password for invalid user www-data from 198.51.100.2 port 3345 ssh2
+Mar  8 12:40:35 server sshd[1405]: Failed password for invalid user www-data from 198.51.100.2 port 3345 ssh2
+Mar  8 12:40:40 server sshd[1405]: Failed password for invalid user www-data from 198.51.100.2 port 3345 ssh2
+Mar  8 12:45:00 server sshd[1500]: Accepted password for developer from 192.168.1.150 port 4432 ssh2
