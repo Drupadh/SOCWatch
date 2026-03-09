@@ -23,6 +23,10 @@ SOCSIEM is a lightweight, high-performance Security Operations Center (SOC) moni
 Generate automated compliance reports and explore raw threat data payloads.
 ![Reports View](assets/reports.png)
 
+### Attack Timeline Investigation
+Click on any threat to view a detailed, scrollable timeline of every malicious attempt from that specific actor. 
+![Attack Timeline](assets/investigation.png)
+
 ### System Configuration
 Dynamically adjust A2A detection engine thresholds and core API endpoints without restarting the system.
 ![Settings Thresholds](assets/settings_thresholds.png)
