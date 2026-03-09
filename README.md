@@ -1,6 +1,6 @@
 # SOCSIEM (SOCWatch) - Automated Security Operations Platform
 
-![SOCSIEM Dashboard](assets/dashboard_v2.png)
+![SOCSIEM Dashboard Layout](assets/dashboard.png)
 
 SOCSIEM is a lightweight, high-performance Security Operations Center (SOC) monitoring platform and SIEM (Security Information and Event Management) tool. It provides real-time log ingestion, automated threat detection, and an interactive, modern dark-themed dashboard for security analysts.
 
@@ -21,7 +21,8 @@ SOCSIEM is a lightweight, high-performance Security Operations Center (SOC) moni
 
 ### Real-Time Threat Alerts
 Dynamic, sortable threat tables with live real-time ingestion monitoring.
-![Threat Alerts](assets/alerts_table.png)
+![Threat Alerts Layout](assets/alerts_table.png)
+![Threat Alerts Data](assets/dashboard_v2.png)
 
 ### Reports & Analytics
 Generate automated compliance reports and explore raw threat data payloads.
@@ -61,25 +62,24 @@ git clone https://github.com/Drupadh/SOCWatch.git
 cd SOCWatch
 ```
 
-### 2. Set up the Backend
-Create a virtual environment and install the required Python dependencies:
+### 2. Set up the Python Environment
+Create a virtual environment to isolate the project dependencies.
 
-```bash
-# Create virtual environment
+**On Windows (Command Prompt / PowerShell):**
+```powershell
 python -m venv venv
-
-# Activate the virtual environment
-# On Windows:
 venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
 ```
-*(If a `requirements.txt` is not present, install core packages: `pip install fastapi uvicorn sqlite3 reportlab aiofiles pydantic`)*
 
-### 3. Start the Server
+**On macOS/Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 3. Start the Backend Server
 Run the FastAPI backend using Uvicorn:
 
 ```bash
