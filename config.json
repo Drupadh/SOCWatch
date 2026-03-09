@@ -1,0 +1,10 @@
+{
+  "log_file": "logs/auth.log",
+  "threat_thresholds": {
+    "critical": 10,
+    "high": 6,
+    "medium": 3
+  },
+  "enable_geolocation": true,
+  "enable_threat_intel": true
+}
