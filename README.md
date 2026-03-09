@@ -1,6 +1,6 @@
 # SOCSIEM (SOCWatch) - Automated Security Operations Platform
 
-![SOCSIEM Dashboard](assets/dashboard.png)
+![SOCSIEM Dashboard](assets/dashboard_v2.png)
 
 SOCSIEM is a lightweight, high-performance Security Operations Center (SOC) monitoring platform and SIEM (Security Information and Event Management) tool. It provides real-time log ingestion, automated threat detection, and an interactive, modern dark-themed dashboard for security analysts.
 
@@ -18,6 +18,10 @@ SOCSIEM is a lightweight, high-performance Security Operations Center (SOC) moni
     *   **TXT:** Detailed text summaries.
 
 ## 📸 Screenshots
+
+### Real-Time Threat Alerts
+Dynamic, sortable threat tables with live real-time ingestion monitoring.
+![Threat Alerts](assets/alerts_table.png)
 
 ### Reports & Analytics
 Generate automated compliance reports and explore raw threat data payloads.

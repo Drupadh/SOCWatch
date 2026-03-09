@@ -296,26 +296,28 @@ function renderTable() {
         row.style.animationDelay = `${index * 50}ms`;
         
         row.innerHTML = `
-            <td class="py-3 px-6 text-slate-400 text-xs font-mono">${timeStr}</td>
-            <td class="py-3 px-6">
+            <td class="py-3 px-6 text-slate-400 text-xs font-mono whitespace-nowrap">${timeStr}</td>
+            <td class="py-3 px-6 whitespace-nowrap">
                 <div class="font-mono text-slate-300 group-hover:text-soc-neon transition">${alert.source_ip}</div>
             </td>
-            <td class="py-3 px-6 text-slate-400 text-xs flex items-center gap-2">
-                ${alert.country !== 'Unknown' ? '<svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' : ''}
-                ${locationStr}
+            <td class="py-3 px-6 text-slate-400 text-xs">
+                <div class="flex items-center gap-2 whitespace-nowrap">
+                    ${alert.country !== 'Unknown' ? '<svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' : ''}
+                    ${locationStr}
+                </div>
             </td>
-            <td class="py-3 px-6 text-slate-300 text-xs">
+            <td class="py-3 px-6 text-slate-300 text-xs whitespace-nowrap">
                 ${alert.attack_type}<br/>
                 <span class="text-slate-500 text-[10px] uppercase">User: <span class="text-slate-400">${alert.username}</span> (${alert.attempt_count} tries)</span>
             </td>
-            <td class="py-3 px-6 text-xs">
+            <td class="py-3 px-6 text-xs whitespace-nowrap">
                 <span class="${intelColor} font-medium tracking-wide">${alert.reputation}</span>
                 ${alert.abuse_reports > 0 ? `<br/><span class="text-[10px] text-slate-500">${alert.abuse_reports} abuse reports</span>` : ''}
             </td>
-            <td class="py-3 px-6">
+            <td class="py-3 px-6 whitespace-nowrap">
                 <span class="badge ${severityClass}">${alert.severity}</span>
             </td>
-            <td class="py-3 px-6 text-right">
+            <td class="py-3 px-6 text-right whitespace-nowrap">
                 <button onclick="openTimelineModal('${alert.source_ip}')" class="px-3 py-1.5 bg-soc-surface hover:bg-slate-700 hover:text-white border border-slate-600 rounded text-xs text-slate-300 transition-all flex items-center inline-flex shadow-sm hover:shadow-md hover:border-soc-neon/50">
                     <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     Investigate
